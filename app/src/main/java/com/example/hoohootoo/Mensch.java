@@ -11,12 +11,13 @@ public class Mensch {
     private int screenWidth = Resources.getSystem().getDisplayMetrics().widthPixels;
     private int screenHeight = Resources.getSystem().getDisplayMetrics().heightPixels;
 
+    private float g = 0.6f;
     private float xAcc = 0;
     private float yAcc = 0.2f;
     private float xVel = 0;
     private float yVel = 0;
-    private float x = 220;
-    private float y = 220;
+    private float x = 0.5f*screenWidth;
+    private float y = 0.5f*screenHeight;
     private Bitmap image;
 
     public float getxVel() {
@@ -75,7 +76,7 @@ public class Mensch {
 //            return;
 //        }
 
-//        yAcc += 0.2f;
+        yAcc += g;
         xVel += xAcc;
         yVel += yAcc;
         x    += xVel;

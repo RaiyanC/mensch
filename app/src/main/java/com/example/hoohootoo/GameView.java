@@ -16,10 +16,11 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     private MainThread thread;
     private Mensch mensch;
 
-    float xDest = 200;
-    float yDest = 200;
+    float xDest = -1;
+    float yDest = -1;
+    boolean hookActive = false;
     double theta;
-    final float hookStrength = 2f;
+    final float hookStrength = 1.7f;
 
     Paint lineP = new Paint();
 
@@ -38,28 +39,22 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         float y = e.getY();
         switch (e.getAction()) {
             case MotionEvent.ACTION_DOWN:
-//                x1 = x;
-//                y1 = y;
                 xDest = x;
                 yDest = y;
-//                theta = (float) Math.atan((xDest-mensch.getX())/(yDest-mensch.getY()));
-
-
                 invalidate();
 
                 break;
-            case MotionEvent.ACTION_MOVE:
+
+            //not needed right now
+//            case MotionEvent.ACTION_MOVE:
 //                xDest = x;
 //                yDest = y;
-
-
-                invalidate();
-                break;
+//                invalidate();
+//                break;
             case MotionEvent.ACTION_UP:
-//                x1 = 0;
-//                y1 = 0;
-//                x2 = 0;
-//                y2 = 0;
+
+                xDest = -1;
+                yDest = -1;
 //                board.setxVel((x2-x1)/50);
 //                board.setyVel((y2-y1)/50);
                 invalidate();
@@ -75,7 +70,8 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         if (canvas != null) {
             canvas.drawColor(Color.WHITE);
             mensch.draw(canvas);
-            canvas.drawLine(mensch.getX(), mensch.getY(), xDest, yDest, lineP);
+            if (hookActive)
+                canvas.drawLine(mensch.getX(), mensch.getY(), xDest, yDest, lineP);
         }
     }
 
@@ -110,17 +106,27 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
     //let the app know what to do each loop
     public void update() {
-        if (xDest >= mensch.getX() && yDest < mensch.getY())
-            theta = Math.atan((xDest - mensch.getX()) / (mensch.getY() - yDest));
-        if (xDest > mensch.getX() && yDest >= mensch.getY())
-            theta = Math.PI - Math.atan((xDest - mensch.getX()) / (yDest - mensch.getY()));
-        if (xDest <= mensch.getX() && yDest > mensch.getY())
-            theta = Math.PI + Math.atan((mensch.getX() - xDest) / (yDest - mensch.getY()));
-        if (xDest < mensch.getX() && yDest <= mensch.getY())
-            theta = 2*Math.PI - Math.atan((mensch.getX() - xDest) / (mensch.getY() - yDest));
+        hookActive = !(xDest == -1 && yDest == -1);
+        if (!hookActive) {
+            mensch.setxAcc(0);
+            mensch.setyAcc(0);
+        } else {
+            //1st quadrant
+            if (xDest >= mensch.getX() && yDest < mensch.getY())
+                theta = Math.atan((xDest - mensch.getX()) / (mensch.getY() - yDest));
+            //2nd quadrant
+            if (xDest > mensch.getX() && yDest >= mensch.getY())
+                theta = Math.PI - Math.atan((xDest - mensch.getX()) / (yDest - mensch.getY()));
+            //3rd quadrant
+            if (xDest <= mensch.getX() && yDest > mensch.getY())
+                theta = Math.PI + Math.atan((mensch.getX() - xDest) / (yDest - mensch.getY()));
+            //4th quadrant
+            if (xDest < mensch.getX() && yDest <= mensch.getY())
+                theta = 2 * Math.PI - Math.atan((mensch.getX() - xDest) / (mensch.getY() - yDest));
 
-        mensch.setxAcc((float) (hookStrength*Math.sin(theta)));
-        mensch.setyAcc((float) (-hookStrength*Math.cos(theta)));
+            mensch.setxAcc((float) (hookStrength * Math.sin(theta)));
+            mensch.setyAcc((float) (-hookStrength * Math.cos(theta)));
+        }
         mensch.update();
 
     }
