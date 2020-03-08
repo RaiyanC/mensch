@@ -1,7 +1,10 @@
 package com.example.hoohootoo;
 
 import android.graphics.Canvas;
+import android.os.Build;
 import android.view.SurfaceHolder;
+
+import androidx.annotation.RequiresApi;
 
 
 public class MainThread extends Thread {
@@ -23,6 +26,7 @@ public class MainThread extends Thread {
         running = isRunning;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     public void run() {
         long startTime;

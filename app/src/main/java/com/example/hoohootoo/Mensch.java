@@ -18,6 +18,8 @@ public class Mensch {
     private float yVel = 0;
     private float x = 0.2f*screenWidth;
     private float y = 0.2f*screenHeight;
+
+    private int lives = 5;
     private Bitmap image;
     private Hitbox hb;
 
@@ -55,6 +57,14 @@ public class Mensch {
 
     public Hitbox getHb() {
         return hb;
+    }
+
+    public void decrementLives() {
+        lives--;
+    }
+
+    public int getLives() {
+        return lives;
     }
 
     Mensch (Bitmap bmp) {

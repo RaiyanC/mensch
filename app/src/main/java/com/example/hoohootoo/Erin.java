@@ -20,8 +20,16 @@ public class Erin {
     private float y = 0.2f*screenHeight;
     private Bitmap image;
     private Hitbox hb;
+    private boolean hit;
     private float walkSpeed = 5;
 
+    public void setHit(boolean hit) {
+        this.hit = hit;
+    }
+
+    public boolean isHit() {
+        return hit;
+    }
 
     public float getxVel() {
         return xVel;

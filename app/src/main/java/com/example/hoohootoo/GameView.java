@@ -2,6 +2,7 @@ package com.example.hoohootoo;
 
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -32,6 +33,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     Bitmap bmpMensch = BitmapFactory.decodeResource(getResources(), R.drawable.mensch);
     Bitmap bmpErin = BitmapFactory.decodeResource(getResources(), R.drawable.erin);
     Bitmap bmpBG = BitmapFactory.decodeResource(getResources(), R.drawable.cave);
+    Bitmap bmpHeart = BitmapFactory.decodeResource(getResources(), R.drawable.heart);
 
     float xDest = -1;
     float yDest = -1;
@@ -86,6 +88,10 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
                         xDest, yDest, lineP);
             mensch.draw(canvas);
             erins.forEach(e -> e.draw(canvas));
+            float x = getWidth();
+            for (int i = 1; i <= mensch.getLives(); i++) {
+                canvas.drawBitmap(bmpHeart, x - (bmpHeart.getWidth() + 10) * i, 50, null );
+            }
         }
     }
 
@@ -150,22 +156,41 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         mensch.update();
         erins.forEach(Erin::update);
 
-        if (mensch.getHb().getCenterY() > canvas.getHeight()) {
+        if (mensch.getHb().getCenterY() > canvas.getHeight() || mensch.getLives() == 0) {
             System.out.println(DEATH_MSG);
+//            mensch.decrementLives();
+//            gameOver();
             System.exit(0);
         }
 
-        //TODO: Hitbox collision test
+        // Hitbox collision test
 //        boolean crash = mensch.getHb().collidesWith(erin.getHb());
-        boolean crash = erins.stream().anyMatch(e -> mensch.getHb().collidesWith(e.getHb()));
-        if (crash) System.out.println("you hit erin, erin hit back");
+        //deduct one life
+        boolean currentlyCrashing = erins.stream()
+                .filter(e->!e.isHit())
+                .anyMatch(e -> mensch.getHb().collidesWith(e.getHb()));
+        //if hit true, won't deduct again
+        erins.forEach(e -> e.setHit(mensch.getHb().collidesWith(e.getHb())));
+
+        if (currentlyCrashing) {
+            System.out.println("you hit erin, erin hit back");
+            mensch.decrementLives();
+
+//            gameOver();
+//            System.exit(0);
+        }
 
         // get them lads movin
         background.setSpeed(mensch.getxVel());
         erins.forEach(e -> e.setxVel(mensch.getxVel()));
         xDest -= mensch.getxVel();
 
-        if (random.nextInt(101)  == 2)
-            erins.add(new Erin(bmpErin, getHeight() - random.nextInt((int) (0.8*getHeight()))));
+        if (random.nextInt(101) == 2)
+            erins.add(new Erin(bmpErin, getHeight() - random.nextInt((int) (0.8 * getHeight()))));
+    }
+
+    public void gameOver() {
+        Intent i = new Intent(getContext(), GameOverActivity.class);
+        getContext().startActivity(i);
     }
 }
