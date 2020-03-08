@@ -79,7 +79,9 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     public void draw(Canvas canvas) {
         super.draw(canvas);
         if (canvas != null) {
-            canvas.drawColor(Color.WHITE);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                canvas.drawColor(Color.rgb(45.9f,54.1f,53.3f));
+            }
             background.draw(canvas);
             if (hookActive)
                 canvas.drawLine(
@@ -164,21 +166,18 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         }
 
         // Hitbox collision test
-//        boolean crash = mensch.getHb().collidesWith(erin.getHb());
+
         //deduct one life
         boolean currentlyCrashing = erins.stream()
                 .filter(e->!e.isHit())
                 .anyMatch(e -> mensch.getHb().collidesWith(e.getHb()));
-        //if hit true, won't deduct again
-        erins.forEach(e -> e.setHit(mensch.getHb().collidesWith(e.getHb())));
 
         if (currentlyCrashing) {
             System.out.println("you hit erin, erin hit back");
             mensch.decrementLives();
-
-//            gameOver();
-//            System.exit(0);
         }
+        //if hit true, won't deduct again
+        erins.forEach(e -> e.setHit(mensch.getHb().collidesWith(e.getHb())));
 
         // get them lads movin
         background.setSpeed(mensch.getxVel());
