@@ -23,7 +23,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     float yDest = -1;
     boolean hookActive = false;
     double theta;
-    final float hookStrength = 1.7f;
+    final float hookStrength = 1.4f;
 
     Paint lineP = new Paint();
 
@@ -45,21 +45,12 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
                 xDest = x;
                 yDest = y;
                 invalidate();
-
                 break;
 
-            //not needed right now
-//            case MotionEvent.ACTION_MOVE:
-//                xDest = x;
-//                yDest = y;
-//                invalidate();
-//                break;
             case MotionEvent.ACTION_UP:
 
                 xDest = -1;
                 yDest = -1;
-//                board.setxVel((x2-x1)/50);
-//                board.setyVel((y2-y1)/50);
                 invalidate();
                 break;
         }
