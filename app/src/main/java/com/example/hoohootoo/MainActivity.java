@@ -2,10 +2,10 @@ package com.example.hoohootoo;
 
 import android.app.Activity;
 import android.content.pm.ActivityInfo;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.view.Window;
 import android.view.WindowManager;
-import android.view.animation.TranslateAnimation;
 
 public class MainActivity extends Activity {
 
@@ -19,7 +19,9 @@ public class MainActivity extends Activity {
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-
+        
         setContentView(new GameView(this));
+        MediaPlayer soundtrack = MediaPlayer.create(getApplicationContext(), R.raw.afoggydaytodie);
+        soundtrack.start();
     }
 }
