@@ -11,10 +11,13 @@ import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
+import static com.example.hoohootoo.MainThread.canvas;
+
 public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
     private MainThread thread;
     private Mensch mensch;
+    private Background background;
 
     float xDest = -1;
     float yDest = -1;
@@ -69,6 +72,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         super.draw(canvas);
         if (canvas != null) {
             canvas.drawColor(Color.WHITE);
+            background.draw(canvas);
             mensch.draw(canvas);
             if (hookActive)
                 canvas.drawLine(mensch.getX(), mensch.getY(), xDest, yDest, lineP);
@@ -85,9 +89,11 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     public void surfaceCreated(SurfaceHolder holder) {
         thread.setRunning(true);
         thread.start();
-        Bitmap bmp = BitmapFactory.decodeResource(getResources(), R.drawable.mensch);
-        mensch = new Mensch(bmp);
-
+        Bitmap bmpMensch = BitmapFactory.decodeResource(getResources(), R.drawable.mensch);
+        Bitmap bmpBG = BitmapFactory.decodeResource(getResources(), R.drawable.cave);
+        bmpBG = Bitmap.createScaledBitmap(bmpBG, 2160, 1080, true);
+        mensch = new Mensch(bmpMensch);
+        background = new Background(bmpBG, 0, 0);
     }
 
     @Override
